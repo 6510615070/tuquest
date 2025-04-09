@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tuquest/screens/homepage.dart';
+import 'package:tuquest/screens/home.dart';
 import 'signup.dart';
 import 'reset_password.dart';
 import 'phone_login.dart';
@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
       final credential = await TQauth.loginViaEmail(email, password);
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(builder: (context) => const Home()),
       );
       setState(() {
         _errorMessage = null; // Clear error on success

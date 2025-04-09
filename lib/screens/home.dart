@@ -4,8 +4,8 @@ import 'eventboard.dart';
 import "quest_page.dart";
 import 'package:tuquest/widgets/bottom_nav.dart'; // เรียกใช้ Bottom Navigation
  
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class Home extends StatelessWidget {
+  const Home({super.key});
  
   @override
   Widget build(BuildContext context) {

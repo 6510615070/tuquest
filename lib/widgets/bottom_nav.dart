@@ -22,7 +22,7 @@ class BottomNav extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildNavItem(context, Icons.home, "Home", const HomeScreen()),
+          _buildNavItem(context, Icons.home, "Home", const Home()),
           _buildNavItem(context, Icons.chat, "Chat", const ChatBoardPage()),
  
           // ปุ่มตรงกลาง (Create Post)
