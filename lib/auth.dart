@@ -20,7 +20,7 @@ class TQauth {
       print("----");
       print(e.code);
       print("----");
-      throw Exception(e);
+      throw e;
     }
   }
 
