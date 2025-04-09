@@ -56,6 +56,13 @@ class _LoginPageState extends State<LoginPage> {
     String password = _passController.text.trim();
     try {
       final credential = await TQauth.loginViaEmail(email, password);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+      setState(() {
+        _errorMessage = null; // Clear error on success
+      });
     } on FirebaseAuthException catch (e) {
       setState(() {
         if (e.code == 'invalid-credential') {
@@ -64,12 +71,10 @@ class _LoginPageState extends State<LoginPage> {
           _errorMessage = 'An error occurred. Please try again.';
         }
       });
-    }
-    if (FirebaseAuth.instance.currentUser != null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Unexpected error occurred.';
+      });
     }
   }
 
@@ -136,7 +141,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
 
                   const SizedBox(height: 20),
-                  // error message
                   if (_errorMessage != null)
                     Text(
                       _errorMessage!,
@@ -231,22 +235,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
 
                   const SizedBox(height: 10),
-
-                  // ปุ่ม Login with Phone
-                  _buildButton(
-                    text: "Login with phone number",
-                    color: Colors.white,
-                    textColor: Colors.black,
-                    iconData: Icons.phone,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PhoneLoginPage(),
-                        ),
-                      );
-                    },
-                  ),
 
                   const SizedBox(height: 20),
 
