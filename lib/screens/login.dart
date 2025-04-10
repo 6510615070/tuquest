@@ -14,369 +14,251 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _isPasswordVisible = false; // ควบคุมการแสดงรหัสผ่าน
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passController = TextEditingController();
-  bool _isLoading = false;
-  bool get _isFormValid => Validator.email(_emailController.text) == null;
-
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passController = TextEditingController();
+  bool _isLoading = false, _showPassword = false;
   String? _errorMessage;
 
-  void handleLogin() async {
-    String email = _emailController.text.trim();
-    String password = _passController.text.trim();
+  bool get _isFormValid =>
+      Validator.email(_emailController.text) == null &&
+      Validator.password(_passController.text) == null;
+
+  Future<void> handleLogin() async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
+
     try {
-      final credential = await TQauth.loginViaEmail(email, password);
+      await TQauth.loginViaEmail(_emailController.text.trim(), _passController.text.trim());
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const Home()),
+        MaterialPageRoute(builder: (_) => const Home()),
       );
-      setState(() {
-        _errorMessage = null; // Clear error on success
-      });
     } on FirebaseAuthException catch (e) {
       setState(() {
-        if (e.code == 'invalid-credential') {
-          _errorMessage = 'Invalid email or password.';
-        } else {
-          _errorMessage = 'An error occurred. Please try again.';
-        }
+        _errorMessage = (e.code == 'invalid-credential')
+            ? 'Invalid email or password.'
+            : 'An error occurred. Please try again.';
       });
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Unexpected error occurred.';
-      });
-    }finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+    } catch (_) {
+      setState(() => _errorMessage = 'Unexpected error occurred.');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  Widget _buildUnderlineField({
+    required String hint,
+    required TextEditingController controller,
+    required String? Function(String?) validator,
+    bool obscure = false,
+    Widget? suffix,
+  }) {
+    return TextFormField(
+      controller: controller,
+      validator: validator,
+      obscureText: obscure && !_showPassword,
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: const TextStyle(color: Colors.white70),
+        enabledBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.white70),
+        ),
+        focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.white),
+        ),
+        suffixIcon: suffix,
+        contentPadding: const EdgeInsets.symmetric(vertical: 12),
+      ),
+      style: const TextStyle(color: Colors.white),
+      onChanged: (_) => setState(() {}),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // gradient background 
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
+            colors: [Color(0xFF000000), Color(0xFFFF0004)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF000000), Color(0xFFFF0004)],
           ),
         ),
         child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  // โลโก้แอป
-                  ShaderMask(
-                    shaderCallback:
-                        (bounds) => const LinearGradient(
-                          colors: [
-                            Color(0xFFA00000),
-                            Color(0xFFEA2520),
-                            Color(0xFFFF8000),
-                          ],
-                        ).createShader(bounds),
-                    child: Text(
-                      "TUQuest",
-                      style: GoogleFonts.montserrat(
-                        fontSize: 48,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                      ),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Column(
+              children: [
+
+                ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    colors: [Color(0xFFA00000), Color(0xFFEA2520), Color(0xFFFF8000)],
+                  ).createShader(bounds),
+                  child: Text(
+                    "TUQuest",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 48,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
                     ),
                   ),
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        // ช่องกรอก Username
-                        _buildInputLabel("Email"),
-                        _buildTextField(
-                          label: "Enter email",
-                          obscureText: false,
-                          controller: _emailController,
-                          validatorFunction: Validator.email,
-                        ),
+                ),
 
-                        // ช่องกรอก Password
-                        _buildInputLabel("Password"),
-                        _buildTextField(
-                          label: "Enter password",
-                          obscureText: true,
-                          controller: _passController,
-                          validatorFunction: Validator.password,
-                        ),
-                      ],
-                    ),
-                  ),
+                const SizedBox(height: 48),
 
-                  const SizedBox(height: 20),
-                  if (_errorMessage != null)
-                    Text(
-                      _errorMessage!,
-                      style: const TextStyle(color: Colors.red, fontSize: 14),
-                    ),
-                  // ปุ่ม Login
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          :ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _errorMessage = null; 
-                        });
-                        if (_formKey.currentState?.validate() ?? false) {
-                          handleLogin();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFF8000),
-                      ),
-                      child: const Text(
-                        "Login",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  // ลิงก์ Forgot Password
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ResetPasswordPage(),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'Forgot Your Password?',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFFFF8000),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // เส้นแบ่ง OR
-                  Row(
-                    children: const [
-                      Expanded(
-                        child: Divider(
-                          color: Colors.white,
-                          thickness: 1.5,
-                          endIndent: 10,
-                        ),
-                      ),
-                      Text(
-                        "OR",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(
-                          color: Colors.white,
-                          thickness: 1.5,
-                          indent: 10,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // ปุ่ม Login with Google
-                  _buildButton(
-                    text: "Login with Google",
-                    color: Colors.white,
-                    textColor: Colors.black,
-                    icon: "assets/google_logo.png",
-                    onPressed: () async {
-                      setState(() => _isLoading = true);
-                      try {
-                        final credential = await TQauth.signInWithGoogle();
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const Home()),
-                        );
-                        setState(() {
-                          _errorMessage = null; // Clear error on success
-                        });
-                      } on FirebaseAuthException catch (e) {
-                        setState(() {
-                          if (e.code == 'invalid-credential') {
-                            _errorMessage = 'Invalid email or password.';
-                          } else {
-                            _errorMessage =
-                                'An error occurred. Please try again.';
-                          }
-                        });
-                      } catch (e) {
-                        setState(() {
-                          _errorMessage = 'Unexpected error occurred.';
-                        });
-                      }finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-                    },
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  const SizedBox(height: 20),
-
-                  // ลิงก์ Register
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                Form(
+                  key: _formKey,
+                  child: Column(
                     children: [
-                      const Text(
-                        'Already have an account? ',
-                        style: TextStyle(color: Color(0xFFFF8000)),
+                      _buildUnderlineField(
+                        hint: 'Email',
+                        controller: _emailController,
+                        validator: Validator.email,
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SignUpPage(),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          'Register',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFFFF8000),
+                      const SizedBox(height: 16),
+                      _buildUnderlineField(
+                        hint: 'Password',
+                        controller: _passController,
+                        validator: Validator.password,
+                        obscure: true,
+                        suffix: IconButton(
+                          icon: Icon(
+                            _showPassword ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.white70,
                           ),
+                          onPressed: () =>
+                              setState(() => _showPassword = !_showPassword),
                         ),
                       ),
                     ],
+                  ),
+                ),
+
+                if (_errorMessage != null) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    _errorMessage!,
+                    style: const TextStyle(color: Colors.redAccent),
                   ),
                 ],
+
+                const SizedBox(height: 24),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 44,
+                  child: _isLoading
+                      ? const Center(child: CircularProgressIndicator(color: Colors.white))
+                      : ElevatedButton(
+                          onPressed: _isFormValid ? handleLogin : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF8000),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          child: const Text(
+                            'Log In',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                ),
+
+                const SizedBox(height: 16),
+
+                TextButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ResetPasswordPage()),
+                  ),
+                  child: const Text(
+                    'Forgot password?',
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                ),
+
+                const SizedBox(height: 32),
+
+                Row(
+                  children: const [
+                    Expanded(child: Divider(color: Colors.white70)),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        'OR',
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                    ),
+                    Expanded(child: Divider(color: Colors.white70)),
+                  ],
+                ),
+
+                SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton.icon(
+                  onPressed: _isLoading
+                      ? null
+                      : () async {
+                          setState(() => _isLoading = true);
+                          try {
+                            final credential = await TQauth.signInWithGoogle();
+                            if (!mounted) return;
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (_) => const Home()),
+                            );
+                          } catch (_) {}
+                          if (mounted) setState(() => _isLoading = false);
+                        },
+                  icon: Image.asset('assets/google_logo.png', height: 24),
+                  label: const Text(
+                    'Login with Google',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
               ),
+
+                const SizedBox(height: 32),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't have an account?", style: TextStyle(color: Colors.white70)),
+                    TextButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SignUpPage()),
+                      ),
+                      child: const Text(
+                        'Sign up',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  // ฟังก์ชันสร้าง Label
-  Widget _buildInputLabel(String label) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 5.0),
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ฟังก์ชันสร้างช่องกรอกข้อมูล
-  Widget _buildTextField({
-    required String label,
-    bool obscureText = false, // Default value
-    TextEditingController? controller, // Optional parameter
-    String? Function(String?)? validatorFunction,
-  }) {
-    return SizedBox(
-      width: double.infinity,
-      child: TextFormField(
-        validator: validatorFunction,
-        controller: controller,
-        obscureText: obscureText ? !_isPasswordVisible : false,
-        style: const TextStyle(color: Colors.black),
-
-        decoration: InputDecoration(
-          errorStyle: const TextStyle(
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-          ),
-          hintText: label,
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
-          ),
-          suffixIcon:
-              obscureText
-                  ? IconButton(
-                    icon: Icon(
-                      _isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  )
-                  : null,
-        ),
-      ),
-    );
-  }
-
-  // ฟังก์ชันสร้างปุ่ม
-  Widget _buildButton({
-    required String text,
-    required Color color,
-    required Color textColor,
-    String? icon,
-    IconData? iconData,
-    required VoidCallback onPressed,
-  }) {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton.icon(
-        onPressed: onPressed,
-        icon:
-            icon != null
-                ? Image.asset(icon, height: 24)
-                : Icon(iconData, color: textColor),
-        label: Text(
-          text,
-          style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
     );
