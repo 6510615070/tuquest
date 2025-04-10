@@ -3,9 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tuquest/screens/home.dart';
 import 'signup.dart';
 import 'reset_password.dart';
-import 'phone_login.dart';
 import 'package:tuquest/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tuquest/material/validator.dart';
 
 class Validator {
   static String? username(String? value) {
@@ -223,14 +223,29 @@ class _LoginPageState extends State<LoginPage> {
                     color: Colors.white,
                     textColor: Colors.black,
                     icon: "assets/google_logo.png",
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            "Login with Google is not implemented yet",
-                          ),
-                        ),
-                      );
+                    onPressed: () async {
+                      try {
+                          final credential = await TQauth.signInWithGoogle();
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const Home()),
+                          );
+                          setState(() {
+                            _errorMessage = null; // Clear error on success
+                          });
+                        } on FirebaseAuthException catch (e) {
+                          setState(() {
+                            if (e.code == 'invalid-credential') {
+                              _errorMessage = 'Invalid email or password.';
+                            } else {
+                              _errorMessage = 'An error occurred. Please try again.';
+                            }
+                          });
+                        } catch (e) {
+                          setState(() {
+                            _errorMessage = 'Unexpected error occurred.';
+                          });
+                        }
                     },
                   ),
 

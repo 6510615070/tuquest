@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:tuquest/screens/homepage.dart';
+import 'package:tuquest/screens/home.dart';
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
  
@@ -49,7 +49,7 @@ class _SignUpPageState extends State<SignUpPage> {
           _errorMessage = null;
         });
         // For example, navigate to the home page:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
       } on FirebaseAuthException catch (e) {
         setState(() {
           _errorMessage = e.message;
