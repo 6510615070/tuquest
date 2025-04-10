@@ -7,37 +7,6 @@ import 'package:tuquest/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tuquest/material/validator.dart';
 
-class Validator {
-  static String? username(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Cannot be empty';
-    }
-
-    return null;
-  }
-
-  static String? email(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Email is required';
-    }
-    final emailRegex = RegExp(
-      r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-    );
-    if (!emailRegex.hasMatch(value)) {
-      return 'Enter a valid email';
-    }
-    return null;
-  }
-
-  static String? password(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Cannot be empty';
-    }
-
-    return null;
-  }
-}
-
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
   @override
@@ -49,11 +18,18 @@ class _LoginPageState extends State<LoginPage> {
   bool _isPasswordVisible = false; // ควบคุมการแสดงรหัสผ่าน
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
+  bool _isLoading = false;
+  bool get _isFormValid => Validator.email(_emailController.text) == null;
+
   String? _errorMessage;
 
   void handleLogin() async {
     String email = _emailController.text.trim();
     String password = _passController.text.trim();
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
     try {
       final credential = await TQauth.loginViaEmail(email, password);
       Navigator.pushReplacement(
@@ -75,6 +51,10 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _errorMessage = 'Unexpected error occurred.';
       });
+    }finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -147,18 +127,28 @@ class _LoginPageState extends State<LoginPage> {
                       style: const TextStyle(color: Colors.red, fontSize: 14),
                     ),
                   // ปุ่ม Login
-                  _buildButton(
-                    text: "Login",
-                    color: const Color(0xFFFF8000),
-                    textColor: Colors.white,
-                    onPressed: () {
-                      setState(() {
-                        _errorMessage = null; // Clear previous error
-                      });
-                      if (_formKey.currentState?.validate() ?? false) {
-                        handleLogin();
-                      }
-                    },
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          :ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _errorMessage = null; 
+                        });
+                        if (_formKey.currentState?.validate() ?? false) {
+                          handleLogin();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFF8000),
+                      ),
+                      child: const Text(
+                        "Login",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ),
 
                   const SizedBox(height: 10),
@@ -224,28 +214,34 @@ class _LoginPageState extends State<LoginPage> {
                     textColor: Colors.black,
                     icon: "assets/google_logo.png",
                     onPressed: () async {
+                      setState(() => _isLoading = true);
                       try {
-                          final credential = await TQauth.signInWithGoogle();
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => const Home()),
-                          );
-                          setState(() {
-                            _errorMessage = null; // Clear error on success
-                          });
-                        } on FirebaseAuthException catch (e) {
-                          setState(() {
-                            if (e.code == 'invalid-credential') {
-                              _errorMessage = 'Invalid email or password.';
-                            } else {
-                              _errorMessage = 'An error occurred. Please try again.';
-                            }
-                          });
-                        } catch (e) {
-                          setState(() {
-                            _errorMessage = 'Unexpected error occurred.';
-                          });
-                        }
+                        final credential = await TQauth.signInWithGoogle();
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const Home()),
+                        );
+                        setState(() {
+                          _errorMessage = null; // Clear error on success
+                        });
+                      } on FirebaseAuthException catch (e) {
+                        setState(() {
+                          if (e.code == 'invalid-credential') {
+                            _errorMessage = 'Invalid email or password.';
+                          } else {
+                            _errorMessage =
+                                'An error occurred. Please try again.';
+                          }
+                        });
+                      } catch (e) {
+                        setState(() {
+                          _errorMessage = 'Unexpected error occurred.';
+                        });
+                      }finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
                     },
                   ),
 
