@@ -1,23 +1,8 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-
-void main() {
-  runApp(const MainApp());
-}
-
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-=======
 import 'dart:async'; 
 import 'package:google_fonts/google_fonts.dart'; 
-import 'screens/login.dart';
+//import 'screens/login.dart';
+import 'screens_v2/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -63,6 +48,24 @@ class SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFFF9D00), // สีพื้นหลังส้ม
+      body: Center(
+        child: Text(
+          "NotiTU",
+          style: GoogleFonts.montserrat(
+            fontSize: 75,
+            fontWeight: FontWeight.w800,
+            color: const Color(0xFFA00000), // สีแดงเข้ม
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+  //หน้า splash เดิม
+  /*Widget build(BuildContext context) {
+    return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -90,9 +93,7 @@ class SplashPageState extends State<SplashPage> {
                 ).createShader(const Rect.fromLTWH(0, 0, 200, 50)),
             ),
           ),
->>>>>>> d949be7 (update working dir)
         ),
       ),
     );
-  }
-}
+  }*/
