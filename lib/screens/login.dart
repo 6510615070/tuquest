@@ -189,51 +189,6 @@ class _LoginPageState extends State<LoginPage> {
 
                 const SizedBox(height: 32),
 
-                Row(
-                  children: const [
-                    Expanded(child: Divider(color: Colors.white70)),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        'OR',
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                    ),
-                    Expanded(child: Divider(color: Colors.white70)),
-                  ],
-                ),
-
-                SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton.icon(
-                  onPressed: _isLoading
-                      ? null
-                      : () async {
-                          setState(() => _isLoading = true);
-                          try {
-                            final credential = await TQauth.signInWithGoogle();
-                            if (!mounted) return;
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (_) => const Home()),
-                            );
-                          } catch (_) {}
-                          if (mounted) setState(() => _isLoading = false);
-                        },
-                  icon: Image.asset('assets/google_logo.png', height: 24),
-                  label: const Text(
-                    'Login with Google',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
 
                 const SizedBox(height: 32),
 
