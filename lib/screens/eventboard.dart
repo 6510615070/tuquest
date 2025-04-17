@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:tuquest/widgets/bottom_nav.dart';
 import 'eventdetail.dart';
+import 'package:tuquest/widgets/announcement_box.dart'; 
 
 class EventBoardPage extends StatefulWidget {
   const EventBoardPage({super.key});
@@ -53,8 +54,25 @@ class _EventBoardPageState extends State<EventBoardPage> {
             ),
           ),
 
+          //
+          // Announcement
+          //
           Positioned(
-            top: 130,
+            top: 140,
+            left: 20,
+            right: 20,
+            child: _buildAnnouncement(context),
+          ),
+
+          // Positioned(
+          //   top: 140 + 300,
+          //   left: 20,
+          //   right: 20,
+          //   child: _buildAnnouncement2(context),
+          // ),
+
+          Positioned(
+            top: 130 + 260,
             left: 20,
             right: 20,
             child: _buildCalendar(),
@@ -91,6 +109,25 @@ class _EventBoardPageState extends State<EventBoardPage> {
       ),
     );
   }
+
+    ///////////////////////////////////////////////////////////
+    ///
+    /// Announcement Box 
+    ///
+    ////////////////////////////////////////////////////////
+    Widget _buildAnnouncement(BuildContext context) {
+      return Container(
+        width: 300,
+        height: 180,
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.amber,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: AnnouncementBox(),
+      );
+    }
+    ///////////////////////////////////////////////////////////////////
 
   Widget _buildCalendar() {
     return TableCalendar(
