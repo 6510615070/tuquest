@@ -86,12 +86,10 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        leading: BackButton(color: Colors.black),
-      ),
+      // gradient background 
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -100,10 +98,11 @@ class _SignUpPageState extends State<SignUpPage> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Column(
-            children: [
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Column(
+              children:  [
               // TUQuest gradient logo
               ShaderMask(
                 shaderCallback: (bounds) => const LinearGradient(
@@ -273,6 +272,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ],
               ),
             ],
+            ),
           ),
         ),
       ),
