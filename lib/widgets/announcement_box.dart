@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tuquest/screens/announcement_page.dart';
 
 class AnnouncementBox extends StatelessWidget {
   const AnnouncementBox ({Key? key}) : super(key: key);
@@ -29,20 +30,43 @@ class AnnouncementBox extends StatelessWidget {
         final data = docs.first.data() as Map<String, dynamic>;
 
         return Card(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
           color: Colors.amber.shade100,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  data['title'] ?? 'Announcement',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12), // ripple effect rounded
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AnnouncementDetailPage(
+                    title: data['title'],
+                    message: data['message'],
+                    imagePath: data['imagePath'],
+                  ),
                 ),
-              ],
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    data['title'] ?? 'Announcement',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Tap here to read more',
+                    style: const TextStyle(fontSize: 14,
+                      color: Colors.grey, 
+                      fontStyle: FontStyle.italic,
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         );

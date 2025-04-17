@@ -119,7 +119,7 @@ class _EventBoardPageState extends State<EventBoardPage> {
       return Container(
         width: 300,
         height: 180,
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.amber,
           borderRadius: BorderRadius.circular(12),
