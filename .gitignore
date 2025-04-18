@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 #This file is copy from https://github.com/flutter/flutter/blob/master/.gitignore to be a base template of a gitignore file
 
 # Do not remove or rename entries in this file, only add new ones
@@ -8,18 +6,6 @@
 # Miscellaneous
 *.class
 *.lock
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-
-=======
-# Miscellaneous
-*.class
 *.log
 *.pyc
 *.swp
@@ -75,12 +61,6 @@ analysis_benchmark.json
 # Flutter/Dart/Pub related
 **/doc/api/
 .dart_tool/
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
 .packages
 build/
 # If you're building an application, you may want to check-in your pubspec.lock
@@ -102,9 +82,6 @@ doc/api/
 *.js.deps
 *.js.map
 
->>>>>>> 1a25dbb (Create flutter project)
->>>>>>> 0463cb9 (Create flutter project)
->>>>>>> 6c9f5f8 (Create flutter project)
 .flutter-plugins
 .flutter-plugins-dependencies
 **/generated_plugin_registrant.dart
@@ -200,7 +177,7 @@ app.*.symbols
 .python-version
 .gclient_previous_custom_vars
 .gclient_previous_sync_commits
-=======
+
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
@@ -226,4 +203,3 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
->>>>>>> d949be7 (update working dir)
