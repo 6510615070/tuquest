@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tuquest/widgets/bottom_nav.dart';
 
 class ContactScreen extends StatelessWidget {
   const ContactScreen({super.key});
@@ -49,7 +48,6 @@ class ContactScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: const BottomNav(),
     );
   }
 

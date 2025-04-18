@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tuquest/screens/home.dart';
 import 'package:tuquest/screens/login.dart';
-import 'reset_password.dart';
 import 'package:tuquest/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tuquest/material/validator.dart';
