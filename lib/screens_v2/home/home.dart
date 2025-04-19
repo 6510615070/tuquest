@@ -27,7 +27,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: const Color(0xFFFF9D00),
       appBar: const CustomTopBar(),
-      bottomNavigationBar: const CustomNavBar(selectedIndex: 1),
+      //bottomNavigationBar: const CustomNavBar(selectedIndex: 1),
+      bottomNavigationBar: const CustomNavBar(),
       body: Stack(
         children: [
           // Gesture โอบคลุมทั้งพื้นหลัง
