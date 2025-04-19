@@ -67,7 +67,7 @@ class _AnnounceCardState extends State<AnnounceCard> {
     return GestureDetector(
       onTap: () => _navigateToDetail(context),
       child: Container(
-        margin: const EdgeInsets.all(26),
+        margin: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: const Color(0xFFF8F8F8),
           borderRadius: BorderRadius.circular(24),
