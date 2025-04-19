@@ -6,19 +6,26 @@ import '../post_detail.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
+  final VoidCallback? onTap;
 
-  const PostCard({super.key, required this.post});
+  const PostCard({
+    super.key, 
+    required this.post,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(
+      onTap: onTap ?? () => Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) => PostDetailPage(
             title: post.topic,
             description: post.detail,
             imageUrl: post.imageUrl,
+            id: post.id,
+            createdAt: post.createdAt,
           ),
         ),
       ),
@@ -48,6 +55,10 @@ class PostCard extends StatelessWidget {
                     DateFormat('d MMM yyyy', 'th_TH').format(post.createdAt),
                     style: TextStyle(color: Colors.grey[600], fontSize: 12),
                   ),
+                  /*Text(
+                    DateFormat('HH:mm', 'th_TH').format(post.createdAt),
+                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  ),*/
                 ],
               ),
             ),

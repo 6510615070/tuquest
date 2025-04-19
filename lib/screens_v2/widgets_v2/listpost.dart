@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-
 import '../models/post_model.dart';
 import 'post_card.dart'; 
+import '../post_detail.dart';
 
 class ListPostSection extends StatelessWidget {
   final DateTime selectedDate;
@@ -104,7 +104,24 @@ class ListPostSection extends StatelessWidget {
               ),
             )
           else
-            ...filteredPosts.map((post) => PostCard(post: post)),
+            ...filteredPosts.map((post) => PostCard(
+              post: post,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  // แบบที่ 1: ใช้ factory constructor .fromPost()
+                  builder: (_) => PostDetailPage.fromPost(post: post),
+
+                  /*// หรือแบบที่ 2: ใช้ constructor หลักโดยแยก field
+                  builder: (_) => PostDetailPage(
+                    title: post.topic,
+                    description: post.detail,
+                    imageUrl: post.imageUrl,
+                    createdAt: post.createdAt,*/
+                ),      
+              ),
+            )
+          ),
         ],
       ),
     );
