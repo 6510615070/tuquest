@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:tuquest/widgets/add_announce.dart';
 import 'package:tuquest/widgets/bottom_nav.dart';
 import 'eventdetail.dart';
 import 'package:tuquest/widgets/announcement_box.dart'; 
+import 'package:firebase_auth/firebase_auth.dart';
 
 class EventBoardPage extends StatefulWidget {
   const EventBoardPage({super.key});
@@ -93,6 +95,34 @@ class _EventBoardPageState extends State<EventBoardPage> {
             ),
           ),
         ],
+      ),
+      ///////////////////////////////////////
+      /// ANNOUNCEMENT
+      ////////////////////////////////////////
+
+      floatingActionButton: InkWell(
+            borderRadius: BorderRadius.circular(12), // ripple effect rounded
+            splashColor: Color.fromARGB(255, 255, 255, 255),
+            onTap: () {
+              final user = FirebaseAuth.instance.currentUser;
+              final email = user?.email ?? '';
+
+              // Temporary Condition. Pls fix thx.
+              if (email.endsWith('@tuquest.com')) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => AddAnnouncePage(),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Access Denied.')),
+                );
+              }
+            },
+        child: const Icon(Icons.add),
+      ///////////////////////////////////////////////////////////
       ),
       bottomNavigationBar: const BottomNav(),
     );
