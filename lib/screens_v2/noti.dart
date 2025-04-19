@@ -6,6 +6,7 @@ import 'widgets_v2/navbar.dart';
 import 'widgets_v2/post_card.dart';
 import 'models/post_model.dart';
 import 'post_detail.dart';
+import 'virtual_card.dart';
 
 class NotiPage extends StatelessWidget {
   const NotiPage({super.key});
@@ -47,68 +48,104 @@ class NotiPage extends StatelessWidget {
       backgroundColor: const Color(0xFFFF9D00),
       appBar: const CustomTopBar(),
       bottomNavigationBar: const CustomNavBar(),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 20),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          "การแจ้งเตือน",
-                          style: GoogleFonts.montserrat(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        if (mockNotifications.isEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16),
-                            child: Text(
-                              'ไม่มีการแจ้งเตือน',
+      body: GestureDetector(
+        onVerticalDragEnd: (d) {
+          if (d.primaryVelocity! > 300) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => VirtualCardPage(
+                  onBackToTop: () => Navigator.pop(context),
+                ),
+              ),
+            );
+          }
+        },
+        child: Container(
+          color: const Color(0xFFFF9D00),
+          child: Column(
+            children: [
+              const SizedBox(height: 50),
+              // White Container
+              Expanded(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 6,
+                        offset: Offset(0, -2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      // Header
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "การแจ้งเตือน",
                               style: GoogleFonts.montserrat(
-                                fontSize: 14,
-                                color: Colors.grey[600],
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFFF8000),
                               ),
                             ),
-                          )
-                        else
-                          ...mockNotifications.map((post) {
-                            return Column(
-                              children: [
-                                PostCard(
-                                  post: post,
-                                  onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => PostDetailPage.fromPost(post: post),
-                                    ),
+                            IconButton(
+                              icon: const Icon(Icons.search, color: Color(0xFFFF8000)),
+                              onPressed: () {},
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      // Notification List
+                      Expanded(
+                        child: mockNotifications.isEmpty
+                            ? Center(
+                                child: Text(
+                                  'ไม่มีการแจ้งเตือน',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
                                   ),
                                 ),
-                                const SizedBox(height: 12),
-                              ],
-                            );
-                          }).toList(),
-                      ],
-                    ),
+                              )
+                            : ListView.builder(
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                itemCount: mockNotifications.length,
+                                itemBuilder: (context, index) {
+                                  final post = mockNotifications[index];
+                                  return Column(
+                                    children: [
+                                      PostCard(
+                                        post: post,
+                                        onTap: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => PostDetailPage.fromPost(post: post),
+                                          ),
+                                        ),
+                                      ),
+                                      if (index != mockNotifications.length - 1)
+                                        const SizedBox(height: 12),
+                                    ],
+                                  );
+                                },
+                              ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 20),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
