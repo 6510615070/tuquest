@@ -19,108 +19,126 @@ class VirtualCardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFF9D00),
+      appBar: const CustomTopBar(),
       body: Column(
         children: [
-          const CustomTopBar(
-            showBackButton: true,
-            backgroundColor: Color(0xFFFF9D00),
-            textColor: Colors.white,
-            showNotificationIcon: false,
-          ),
+          // 🧾 Card แสดงข้อมูล
           Expanded(
             child: SingleChildScrollView(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 12),
-                  
-                  // Card Container
+                  const SizedBox(height: 58),
                   Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 20),
-                    padding: const EdgeInsets.all(16),
+                    margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 48),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(28),
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF5C0000), Color(0xFFFF0000)],
+                        colors: [Color(0xFF000000), Color(0xFFFF0004)],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                       ),
+                      borderRadius: BorderRadius.circular(36),
                     ),
                     child: Column(
                       children: [
+                        // โลโก้ธรรมศาสตร์
                         Image.asset(
                           'assets/thammasat_logo.png',
-                          width: 220,
+                          height: 60,
+                          fit: BoxFit.contain,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 20),
 
-                        // QR Code Section
-                        Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            QrImageView(
-                              data: studentId,
-                              version: QrVersions.auto,
-                              size: 220,
-                              backgroundColor: Colors.white,
-                              eyeStyle: const QrEyeStyle(
-                                eyeShape: QrEyeShape.circle,
-                                color: Colors.black,
-                              ),
-                              dataModuleStyle: const QrDataModuleStyle(
-                                dataModuleShape: QrDataModuleShape.circle,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Container(
-                              width: 60,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 3),
-                                image: DecorationImage(
-                                  image: NetworkImage(profileImageUrl),
-                                  fit: BoxFit.cover,
+                        // QR Code ฝังรูปตรงกลาง
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 10,
+                                spreadRadius: 2,
+                              )
+                            ],
+                          ),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              QrImageView(
+                                data: studentId, // ใช้รหัสนักศึกษาเป็นข้อมูลใน QR Code
+                                version: QrVersions.auto,
+                                size: 200,
+                                backgroundColor: Colors.white,
+                                eyeStyle: const QrEyeStyle(
+                                  eyeShape: QrEyeShape.square,
+                                  color: Colors.black,
+                                ),
+                                dataModuleStyle: const QrDataModuleStyle(
+                                  dataModuleShape: QrDataModuleShape.square,
+                                  color: Colors.black,
                                 ),
                               ),
-                            ),
-                          ],
+                              // วงกลมโปรไฟล์
+                              Container(
+                                width: 90,
+                                height: 90,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 3,
+                                  ),
+                                  image: DecorationImage(
+                                    image: NetworkImage(profileImageUrl),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Barcode ที่สามารถสแกนได้จริง
+                        Container(
+                          color: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                          child: BarcodeWidget(
+                            barcode: Barcode.code128(), // ใช้ Barcode ที่สแกนได้จริง
+                            data: studentId, // ใช้รหัสนักศึกษาเป็นข้อมูลใน Barcode
+                            width: 200,
+                            height: 60,
+                            drawText: false,
+                          ),
                         ),
 
                         const SizedBox(height: 20),
 
-                        // Barcode Section
-                        BarcodeWidget(
-                          barcode: Barcode.code128(),
-                          data: studentId,
-                          width: 200,
-                          height: 70,
-                          drawText: false,
-                          backgroundColor: Colors.white,
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        // Student Info Section
+                        // 👨🏻‍🎓 ข้อมูลนักศึกษา
                         Text(
                           "Student ID: $studentId",
                           style: GoogleFonts.montserrat(
                             color: Colors.amber,
                             fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 8),
                         Text(
                           studentName,
                           style: GoogleFonts.montserrat(
-                            fontWeight: FontWeight.bold,
                             fontSize: 18,
+                            fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          "คณะ$faculty",
+                          "นักศึกษาคณะ$faculty",
                           style: GoogleFonts.montserrat(
                             fontSize: 14,
                             color: Colors.white,
@@ -129,29 +147,41 @@ class VirtualCardPage extends StatelessWidget {
                       ],
                     ),
                   ),
-
-                  const SizedBox(height: 32),
                 ],
               ),
             ),
           ),
 
-          // Back to Home Button
+          // ⬆️ ปุ่ม "กลับไปหน้าแรก"
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.only(top: 4, bottom: 12),
             width: double.infinity,
             decoration: const BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+              boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6,
+            offset: Offset(0, -2),
+          ),
+        ],
             ),
             child: GestureDetector(
               onTap: onBackToTop,
               child: Column(
                 children: const [
-                  Icon(Icons.keyboard_arrow_up_rounded, 
-                      color: Colors.grey, size: 32),
-                  Text("กดเพื่อกลับไปหน้าแรก", 
-                      style: TextStyle(color: Colors.grey)),
+                  Icon(Icons.keyboard_arrow_up_rounded,
+                      color: Colors.grey, size: 36),
+                  SizedBox(height: 4),
+                  Text(
+                    "กดเพื่อกลับไปหน้าแรก",
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ],
               ),
             ),
