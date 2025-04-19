@@ -65,7 +65,7 @@ class _SchedulePageState extends State<SchedulePage> {
             style: GoogleFonts.montserrat(
               fontWeight: FontWeight.bold,
               fontSize: 18,
-              color: Colors.deepOrange,
+              color: Color(0xFFFF8000),
             ),
           ),
           IconButton(
@@ -138,7 +138,7 @@ class _SchedulePageState extends State<SchedulePage> {
             style: GoogleFonts.montserrat(
               fontWeight: FontWeight.bold,
               fontSize: 18,
-              color: Colors.deepOrange,
+              color: Color(0xFFFF8000),
             ),
           ),
           IconButton(
@@ -235,10 +235,10 @@ class _SchedulePageState extends State<SchedulePage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Classroom Schedule", style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.deepOrange)),
+                            Text("Classroom Schedule", style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFFF8000))),
                             IconButton(
                               onPressed: _showAddDialog,
-                              icon: const Icon(Icons.add_circle_outline, color: Colors.orange),
+                              icon: const Icon(Icons.add_circle_outline, color: Color(0xFFFF8000)),
                             ),
                           ],
                         ),
@@ -255,7 +255,7 @@ class _SchedulePageState extends State<SchedulePage> {
                               return GestureDetector(
                                 onTap: () => setState(() => selectedDay = d),
                                 child: CircleAvatar(
-                                  backgroundColor: selected ? Colors.orange : Colors.grey[300],
+                                  backgroundColor: selected ? Color(0xFFFF8000) : Colors.grey[300],
                                   radius: 18,
                                   child: Text(d, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                                 ),
@@ -275,19 +275,19 @@ class _SchedulePageState extends State<SchedulePage> {
                               return GestureDetector(
                                 onTap: () => _showEditDialog(index),
                                 child: Container(
-                                  margin: const EdgeInsets.only(bottom: 12),
-                                  padding: const EdgeInsets.all(12),
+                                  margin: const EdgeInsets.only(bottom: 5),
+                                  padding: const EdgeInsets.all(30),
                                   decoration: BoxDecoration(
                                     color: const Color(0xFFFF9D00),
-                                    borderRadius: BorderRadius.circular(16),
+                                    borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Row(
                                     children: [
                                       SizedBox(
-                                        width: 80,
+                                        width: 90,
                                         child: Text(
                                           "${item['start']} - ${item['end']}",
-                                          style: GoogleFonts.montserrat(fontWeight: FontWeight.w600, color: Colors.white),
+                                          style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white),
                                         ),
                                       ),
                                       const VerticalDivider(color: Colors.white),
@@ -295,8 +295,8 @@ class _SchedulePageState extends State<SchedulePage> {
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Text("${item['code']} · ${item['subject']}", style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.bold)),
-                                            Text("📍 ${item['room']}", style: GoogleFonts.montserrat(color: Colors.white70)),
+                                            Text("${item['code']} · ${item['subject']}", style: GoogleFonts.montserrat(color: Color(0xFFA00000), fontSize: 14, fontWeight: FontWeight.w700)),
+                                            Text("🏫 ${item['room']}", style: GoogleFonts.montserrat(color: Color(0xFFeae0cb), fontWeight: FontWeight.w700)),
                                           ],
                                         ),
                                       ),
