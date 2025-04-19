@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tuquest/widgets/announcement_box.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AnnouncementDetailPage extends StatelessWidget {
   final String title;
@@ -18,35 +18,51 @@ class AnnouncementDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Announcement Details')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            imagePath != null && imagePath!.isNotEmpty
-                ? Image.network(imagePath!) 
-                : Container(
-                    width: double.infinity,
-                    height: 200, 
-                    color: Colors.grey.shade200, 
-                    child: const Center(
-                      child: Icon(
-                        Icons.image_not_supported, 
-                        color: Colors.grey,
-                        size: 40,
-                      ),
+      body: Stack(
+        children: [
+          _buildBackground(),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                imagePath != null && imagePath!.isNotEmpty ? Image.network(imagePath!): 
+                Container(
+                  width: double.infinity,
+                  height: 200, 
+                  color: Colors.grey.shade200, 
+                  child: const Center(
+                    child: Icon(
+                      Icons.image_not_supported, 
+                      color: Colors.grey,
+                      size: 40,
                     ),
                   ),
-            Text(
-              title,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  title,
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  message,
+                  style: const TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              message,
-              style: const TextStyle(fontSize: 18),
-            ),
-          ],
+          ),
+        ],
+        ),
+      );
+  }
+
+  Widget _buildBackground() {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF000000), Color(0xFFFF0004)],
         ),
       ),
     );
