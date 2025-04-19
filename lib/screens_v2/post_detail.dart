@@ -7,12 +7,13 @@ import 'widgets_v2/topbar.dart';
 import 'providers/fav_provider.dart';
 import 'models/post_model.dart';
 import 'widgets_v2/navbar.dart';
+import 'virtual_card.dart';
 
 class PostDetailPage extends StatelessWidget {
   final String title;
   final String description;
   final String? imageUrl;
-  final bool isNetworkImage; // ใช้ตรวจสอบว่าเป็นรูปจาก network หรือไม่
+  final bool isNetworkImage;
   final DateTime? createdAt;
   final String? id;
 
@@ -21,12 +22,11 @@ class PostDetailPage extends StatelessWidget {
     required this.title,
     required this.description,
     this.imageUrl,
-    this.isNetworkImage = true, // ค่า default เป็น true สำหรับ API ใหม่
+    this.isNetworkImage = true,
     this.createdAt,
     this.id,
   });
 
-  // Constructor สำหรับรับ Post object
   factory PostDetailPage.fromPost({
     Key? key,
     required Post post,
@@ -36,7 +36,7 @@ class PostDetailPage extends StatelessWidget {
       title: post.topic,
       description: post.detail,
       imageUrl: post.imageUrl,
-      isNetworkImage: post.isNetworkImage ?? true, // ใช้ค่าจาก Post object
+      isNetworkImage: post.isNetworkImage ?? true,
       createdAt: post.createdAt,
       id: post.id,
     );
@@ -51,88 +51,161 @@ class PostDetailPage extends StatelessWidget {
       backgroundColor: const Color(0xFFFF9D00),
       appBar: const CustomTopBar(),
       bottomNavigationBar: const CustomNavBar(),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
+      body: GestureDetector(
+        onVerticalDragEnd: (d) {
+          if (d.primaryVelocity! > 200) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => VirtualCardPage(
+                  onBackToTop: () => Navigator.pop(context),
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "รายละเอียดโพสต์",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          favProvider.isFavorite(post)
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: favProvider.isFavorite(post)
-                              ? Colors.red
-                              : Colors.grey,
-                        ),
-                        onPressed: () {
-                          if (favProvider.isFavorite(post)) {
-                            favProvider.remove(post);
-                          } else {
-                            favProvider.add(post);
-                          }
-                        },
+            );
+          }
+        },
+        child: Container(
+          color: const Color(0xFFFF9D00),
+          child: Column(
+            children: [
+              const SizedBox(height: 50),
+              // White Container
+              Expanded(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 6,
+                        offset: Offset(0, -2),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  // ส่วนแสดงรูปภาพ (รองรับทั้ง Asset และ Network)
-                  if (imageUrl?.isNotEmpty ?? false)
-                    _buildImageWidget(),
-                  const SizedBox(height: 16),
-                  Text(
-                    title,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (createdAt != null) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      "วันที่: ${DateFormat('d MMM yyyy', 'th_TH').format(createdAt!)}",
-                      style: GoogleFonts.montserrat(
-                        color: Colors.grey[600],
+                  child: Column(
+                    children: [
+                      // Scrollable Content
+                      Expanded(
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Header with Favorite button
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "รายละเอียดโพสต์",
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFFFF8000),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      favProvider.isFavorite(post)
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      color: favProvider.isFavorite(post)
+                                          ? Colors.red
+                                          : Colors.grey,
+                                    ),
+                                    onPressed: () {
+                                      if (favProvider.isFavorite(post)) {
+                                        favProvider.remove(post);
+                                      } else {
+                                        favProvider.add(post);
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              
+                              // Image section
+                              if (imageUrl?.isNotEmpty ?? false)
+                                _buildImageWidget(),
+                              const SizedBox(height: 16),
+                              
+                              // Title
+                              Text(
+                                title,
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              
+                              // Date
+                              if (createdAt != null) ...[
+                                const SizedBox(height: 8),
+                                Text(
+                                  "วันที่: ${DateFormat('d MMM yyyy', 'th_TH').format(createdAt!)}",
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                              const SizedBox(height: 16),
+                              
+                              // Description
+                              Text(
+                                description,
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                  const SizedBox(height: 16),
-                  Text(
-                    description,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 16,
-                    ),
+                      
+                      // Back Button at bottom
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 20,
+                          right: 20,
+                          bottom: 20,
+                          top: 10,
+                        ),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFFFF8000),
+                              foregroundColor: Color(0xFFFF8000),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              'ย้อนกลับ',
+                              style: GoogleFonts.montserrat(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // Widget สำหรับแสดงรูปภาพ
   Widget _buildImageWidget() {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
@@ -164,7 +237,6 @@ class PostDetailPage extends StatelessWidget {
     );
   }
 
-  // สร้าง Post object จากข้อมูลที่มี
   Post _toPost() {
     return Post(
       id: id ?? DateTime.now().toString(),
