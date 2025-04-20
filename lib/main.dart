@@ -26,10 +26,15 @@ class MyApp extends StatelessWidget {
     isLoggedIn =true;
   }
     return MaterialApp(
-      title: 'TUQuest',
+      title: 'NotiTU',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 166, 35, 39),
+        ),
+        useMaterial3: true,
+        textTheme: GoogleFonts.montserratTextTheme(
+          Theme.of(context).textTheme,
         ),
       ),
       home: isLoggedIn ? const Home() : const LoginPage(),
