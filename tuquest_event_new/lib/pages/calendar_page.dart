@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tuquest_event_new/pages/add_edit_event_page.dart';
 import '../models/event_model.dart';
 import '../widgets/calendar_widget.dart';
 import '../widgets/event_list_widget.dart';
@@ -20,7 +21,7 @@ class _CalendarPageState extends State<CalendarPage> {
         .where((entry) =>
             entry.key.year == month.year && entry.key.month == month.month)
         .expand((entry) =>
-            entry.value.map((event) => EventModel(date: entry.key, title: event)))
+            entry.value.map((event) => EventModel(date: entry.key, title: event, description: '', id: '', start: month, end: month, createdBy: '')))
         .toList();
   }
 
@@ -68,50 +69,21 @@ class _CalendarPageState extends State<CalendarPage> {
 
   // Add Event Dialog
   void _showAddEventDialog(BuildContext context) {
-    DateTime selectedDate = _focusedDay;
-    final TextEditingController eventController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add New Event'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.calendar_today),
-              title: Text('Date: ${selectedDate.toLocal().toString().split(' ')[0]}'),
-              onTap: () async {
-                final pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: _focusedDay,
-                  firstDate: DateTime(2020),
-                  lastDate: DateTime(2030),
-                );
-                if (pickedDate != null) {
-                  setState(() => selectedDate = pickedDate);
-                }
-              },
-            ),
-            TextField(
-              controller: eventController,
-              decoration: const InputDecoration(labelText: 'Event Name'),
-            ),
-          ],
+    ElevatedButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddEditEventPage(
+          onSave: ({required title, required description, required start, required end, required imagePath}) {
+            // TODO: บันทึกไป Firestore หรือ local _events
+          },
         ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              if (eventController.text.isNotEmpty) {
-                _addEvent(selectedDate, eventController.text);
-                Navigator.pop(context);
-              }
-            },
-            child: const Text('Add Event'),
-          ),
-        ],
       ),
     );
+  },
+  child: const Text('Add Event'),
+);
+
   }
 }
