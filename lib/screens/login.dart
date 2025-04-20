@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   String? _errorMessage;
 
   bool get _isFormValid =>
-      Validator.email(_emailController.text) == null &&
+      Validator.studentID(_emailController.text) == null &&
       Validator.password(_passController.text) == null;
 
   Future<void> handleLogin() async {
@@ -117,9 +117,9 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     children: [
                       _buildUnderlineField(
-                        hint: 'Email',
+                        hint: 'Student ID',
                         controller: _emailController,
-                        validator: Validator.email,
+                        validator: Validator.studentID,
                       ),
                       const SizedBox(height: 16),
                       _buildUnderlineField(
@@ -195,14 +195,11 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don't have an account?", style: TextStyle(color: Colors.white70)),
+                    const Text("Powered by", style: TextStyle(color: Colors.white70)),
                     TextButton(
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const SignUpPage()),
-                      ),
+                      onPressed: () => {},
                       child: const Text(
-                        'Sign up',
+                        'TU api',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
