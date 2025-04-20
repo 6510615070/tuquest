@@ -27,4 +27,19 @@ class Validator {
 
     return null;
   }
+  
+static String? studentID(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'ID is required';
+  }
+
+  final idRegex = RegExp(r'^\d{10}$');
+  if (!idRegex.hasMatch(value)) {
+    return 'Student ID must be 10 digits';
+  }
+
+  return null;
+}
+
+
 }
