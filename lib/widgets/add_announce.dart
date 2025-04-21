@@ -11,34 +11,35 @@ class AddAnnouncePage extends StatefulWidget {
 class _AddAnnouncePageState extends State<AddAnnouncePage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
-  File? _image;
+  final TextEditingController _imgPathController = TextEditingController();
+  // File? _image;
 
-  Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
+  // Future<void> _pickImage() async {
+  //   final pickedFile = await ImagePicker().pickImage(
+  //     source: ImageSource.gallery,
+  //   );
+  //   if (pickedFile != null) {
+  //     setState(() {
+  //       _image = File(pickedFile.path);
+  //     });
+  //   }
+  // }
+
+  void _createAnnouncement() async {
+    if (_titleController.text.isNotEmpty && _messageController.text.isNotEmpty) {
+      await Announcement.addAnnounce(
+        _titleController.text,
+        _messageController.text,
+        imagePath: _imgPathController.text.isNotEmpty ? _imgPathController.text : null,
+      );
+
+      Navigator.pop(context, true); 
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please provide both a title and a message.")),
+      );
     }
   }
-
-void _createAnnouncement() async {
-  if (_titleController.text.isNotEmpty && _messageController.text.isNotEmpty) {
-    await Announcement.addAnnounce(
-      _titleController.text,
-      _messageController.text,
-      imagePath: _image?.path, 
-    );
-
-    Navigator.pop(context, true); 
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Please provide both a title and a message.")),
-    );
-  }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -58,13 +59,12 @@ void _createAnnouncement() async {
               maxLines: 3,
             ),
             SizedBox(height: 10),
-            _image != null
-                ? Image.file(_image!, height: 150)
-                : Text("No image selected"),
-            TextButton.icon(
-              onPressed: _pickImage,
-              icon: Icon(Icons.image),
-              label: Text("Select Image"),
+            TextField(
+              controller: _imgPathController,
+              decoration: InputDecoration(labelText: 'Image URL (optional)'),
+              onChanged: (_) {
+                setState(() {});
+              },
             ),
             SizedBox(height: 20),
             ElevatedButton(onPressed: _createAnnouncement, child: Text('Create')),

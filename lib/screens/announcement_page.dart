@@ -26,19 +26,12 @@ class AnnouncementDetailPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                imagePath != null && imagePath!.isNotEmpty ? Image.network(imagePath!): 
-                Container(
-                  width: double.infinity,
-                  height: 200, 
-                  color: Colors.grey.shade200, 
-                  child: const Center(
-                    child: Icon(
-                      Icons.image_not_supported, 
-                      color: Colors.grey,
-                      size: 40,
-                    ),
-                  ),
-                ),
+                imagePath != null && imagePath!.isNotEmpty
+                ? Image.network(
+                    imagePath!,
+                    errorBuilder: (context, error, stackTrace) => SizedBox(),
+                  )
+                : SizedBox(),
                 Text(
                   title,
                   style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
